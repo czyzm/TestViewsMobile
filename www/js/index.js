@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+var jxcoreLoaded = false;
 var app = {
     // Application Constructor
     initialize: function() {
@@ -28,6 +29,12 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
+        jxcore.isReady(function() {
+            jxcore('app.js').loadMainFile(function(ret, err) {
+                console.log('jxcore loaded');
+                jxcoreLoaded = true;
+            });
+        });
     },
 
     // Update DOM on a Received Event
