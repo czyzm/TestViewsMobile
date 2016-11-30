@@ -1,0 +1,15 @@
+{
+  "name": "jxcore",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "leveldown-mobile": "1.1.1",
+    "pouchdb": "6.0.7"
+  }
+}
