@@ -15,7 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "pouchdb": "6.0.7",
+    "pouchdb": "6.0.5",
     "q": "1.0.1"
   }
 }

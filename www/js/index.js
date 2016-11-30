@@ -21,7 +21,7 @@
  * Created by mczyz on 30/11/16.
  */
 
-var numberOfDocuments = 5000,
+var numberOfDocuments = 10000,
     localDb;
 
 function callWithLog(fn, message) {
@@ -32,7 +32,7 @@ function callWithLog(fn, message) {
 }
 
 function createDatabase () {
-    localDb = new PouchDB('LOCALDB');
+    localDb = new PouchDB('LOCALDBVIEW');
     return Q.when();
 }
 

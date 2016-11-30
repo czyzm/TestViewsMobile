@@ -4,7 +4,7 @@ var PouchDB = require('pouchdb'),
     Q = require('q'),
     path = require('path'),
     fs = require('fs'),
-    numberOfDocuments = 5000,
+    numberOfDocuments = 10000,
     localDb,
     queryTime;
 
@@ -31,12 +31,10 @@ function createDatabase () {
                 fs.mkdirSync(dbPrefix);
             }
 
-            var LevelDownPouchDB = PouchDB.defaults({
+            localDb = new PouchDB('LOCALDBJX', {
                 db: require('leveldown-mobile'),
                 prefix: dbPrefix
             });
-
-            localDb = new LevelDownPouchDB('LOCALDB');
             deferred.resolve();
         }
     });
@@ -56,7 +54,7 @@ function addData () {
             "_id": "TestDoc" + i,
             "title": "TestTitle" + i
         };
-        allAdditions.push(localDb.put(doc).then(function () {console.log("added");}).catch(function (err) {console.log(err);}));
+        allAdditions.push(localDb.put(doc));
     }
     return Q.all(allAdditions);
 }
