@@ -1,0 +1,21 @@
+{
+  "name": "www",
+  "homepage": "https://github.com/czyzm/TestViewsMobile",
+  "authors": [
+    "Marek Czyz <mczyz@ra.rockwell.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "pouchdb": "6.0.7",
+    "q": "1.0.1"
+  }
+}

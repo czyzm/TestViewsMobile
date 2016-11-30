@@ -15,7 +15,7 @@ jx npm install --no-optional --autoremove "*.gz"
 find . -name "*.gz" -delete
 
 cd ..
-bower install pouchdb#6.0.7
+bower install
 
 cd ..
 cordova platform add android
