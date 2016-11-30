@@ -21,7 +21,7 @@
  * Created by mczyz on 30/11/16.
  */
 
-var numberOfDocuments = 10000,
+var numberOfDocuments = 2000,
     localDb;
 
 function callWithLog(fn, message) {
