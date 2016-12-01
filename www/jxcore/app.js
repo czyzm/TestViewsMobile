@@ -31,10 +31,17 @@ function createDatabase () {
                 fs.mkdirSync(dbPrefix);
             }
 
+            if (fs.existsSync(path.join(dbPrefix, 'LOCALDBJX'))) {
+                console.log('DB exists before creation');
+                deferred.reject('DB exists before it is created');
+                return;
+            }
+
             localDb = new PouchDB('LOCALDBJX', {
                 db: require('leveldown-mobile'),
                 prefix: dbPrefix
             });
+
             deferred.resolve();
         }
     });
@@ -106,5 +113,9 @@ Mobile('runTest').registerSync(function () {
         })
         .then(function () {
             Mobile('testFinished').call(queryTime);
+        })
+        .catch(function (error) {
+            console.log('Test failed: ' + error)
+            Mobile('testFinished').call(error);
         });
 });

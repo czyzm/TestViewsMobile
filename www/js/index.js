@@ -154,6 +154,10 @@ function testWebView () {
         .then(function () {
             setLabel('webviewtest', 'FINISHED (' + queryTime + 's)');
             testRunning = false;
+        })
+        .catch(function (error) {
+            console.log('Test failed: ' + error)
+            Mobile('testFinished').call(error);
         });
 }
 
