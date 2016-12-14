@@ -42,13 +42,18 @@
                 <p class="event received">Device is Ready</p>
             </div>
             <div class="buttons">
-                <button onclick="testWebView();">WebView test</button></br>
+                <button onclick="testWebView();">WebView query</button></br>
                 <p id="webviewtest">NOT STARTED</p>
-                <button onclick="testJXCore();">JXCore test</button></br>
+                <button onclick="testWebView(true);">WebView find</button></br>
+                <p id="webviewtestfind">NOT STARTED</p>
+                <button onclick="testJXCore();">JXCore query</button></br>
                 <p id="jxcoretest">NOT STARTED</p>
+                <button onclick="testJXCore(true);">JXCore find</button></br>
+                <p id="jxcoretestfind">NOT STARTED</p>
             </div>
         </div>
         <script type="text/javascript" src="bower_components/pouchdb/dist/pouchdb.min.js"></script>
+        <script type="text/javascript" src="bower_components/pouchdb-find/dist/pouchdb.find.min.js"></script>
         <script type="text/javascript" src="bower_components/q/q.js"></script>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>

@@ -4,9 +4,11 @@ var PouchDB = require('pouchdb'),
     Q = require('q'),
     path = require('path'),
     fs = require('fs'),
-    numberOfDocuments = 2000,
+    numberOfDocuments = 6000,
     localDb,
     queryTime;
+
+PouchDB.plugin(require('pouchdb-find'));
 
 function callWithLog(fn, message) {
     console.log(message + ' ' + (new Date().toLocaleTimeString()));
@@ -83,6 +85,14 @@ function addView () {
     return localDb.put(ddoc);
 }
 
+function addIndex () {
+    return localDb.createIndex({
+        index: {
+            fields: ['title']
+        }
+    });
+}
+
 function queryDb () {
     var startTime = new Date();
     return localDb.query('testdoc', {
@@ -97,25 +107,45 @@ function queryDb () {
     });
 }
 
-Mobile('runTest').registerSync(function () {
+function findInDb () {
+    var startTime = new Date();
+    return localDb.find({
+        selector: {title: {$lte: 'TestTitle99999'}},
+        limit: 100
+    }).then(function (result) {
+        var endTime = new Date();
+        queryTime = (endTime.getTime() - startTime.getTime()) / 1000;
+        console.log('Got result with ' + result.docs.length + ' rows');
+    }).catch(function (err) {
+        console.log('Got error ' + err);
+    });
+}
+
+Mobile('runTest').registerSync(function (useDbFind) {
     callWithLog(createDatabase, 'Create database')
+        .then(function () {
+            if (useDbFind) {
+                return callWithLog(addIndex, 'Add index');
+            }
+            return callWithLog(addView, 'Add view');
+        })
         .then(function () {
             return callWithLog(addData, 'Add data');
         })
         .then(function () {
-            return callWithLog(addView, 'Add view');
-        })
-        .then(function () {
+            if (useDbFind) {
+                return callWithLog(findInDb, 'Find in DB');
+            }
             return callWithLog(queryDb, 'Query view');
         })
         .then(function () {
             return callWithLog(destroyDatabase, 'Destroy db');
         })
         .then(function () {
-            Mobile('testFinished').call(queryTime);
+            Mobile('testFinished').call(queryTime, useDbFind);
         })
         .catch(function (error) {
             console.log('Test failed: ' + error)
-            Mobile('testFinished').call(error);
+            Mobile('testFinished').call(error, useDbFind);
         });
 });

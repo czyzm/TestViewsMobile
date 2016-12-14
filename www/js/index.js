@@ -21,7 +21,7 @@
  * Created by mczyz on 30/11/16.
  */
 
-var numberOfDocuments = 2000,
+var numberOfDocuments = 6000,
     localDb;
 
 function callWithLog(fn, message) {
@@ -70,6 +70,14 @@ function addView () {
     return localDb.put(ddoc);
 }
 
+function addIndex () {
+    return localDb.createIndex({
+        index: {
+            fields: ['title']
+        }
+    });
+}
+
 function queryDb () {
     var startTime = new Date();
     return localDb.query('testdoc', {
@@ -84,6 +92,19 @@ function queryDb () {
     });
 }
 
+function findInDb () {
+    var startTime = new Date();
+    return localDb.find({
+        selector: {title: {$lte: 'TestTitle99999'}},
+        limit: 100
+    }).then(function (result) {
+        var endTime = new Date();
+        queryTime = (endTime.getTime() - startTime.getTime()) / 1000;
+        console.log('Got result with ' + result.docs.length + ' rows');
+    }).catch(function (err) {
+        console.log('Got error ' + err);
+    });
+}
 
 var jxcoreLoaded = false,
     testRunning = false,
@@ -102,8 +123,8 @@ var app = {
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
         jxcore.isReady(function() {
-            jxcore('testFinished').register(function (executionTime) {
-                setLabel('jxcoretest', 'FINISHED (' + executionTime + 's)');
+            jxcore('testFinished').register(function (executionTime, useDbFind) {
+                setLabel(useDbFind ? 'jxcoretestfind' : 'jxcoretest', 'FINISHED (' + executionTime + 's)');
                 testRunning = false;
             });
             jxcore('app.js').loadMainFile(function(ret, err) {
@@ -131,44 +152,50 @@ function setLabel (labelId, text) {
     labelElement.innerHTML = text;
 }
 
-function testWebView () {
+function testWebView (useDbFind) {
     if (testRunning) {
         return;
     }
     testRunning = true;
-    setLabel('webviewtest', 'STARTED');
+    setLabel(useDbFind ? 'webviewtestfind' : 'webviewtest', 'STARTED');
 
     callWithLog(createDatabase, 'Create database')
+        .then(function () {
+            if (useDbFind) {
+                return callWithLog(addIndex, 'Add index');
+            }
+            return callWithLog(addView, 'Add view');
+        })
         .then(function () {
             return callWithLog(addData, 'Add data');
         })
         .then(function () {
-            return callWithLog(addView, 'Add view');
-        })
-        .then(function () {
+            if (useDbFind) {
+                return callWithLog(findInDb, 'Find in DB');
+            }
             return callWithLog(queryDb, 'Query view');
         })
         .then(function () {
             return callWithLog(destroyDatabase, 'Destroy db');
         })
         .then(function () {
-            setLabel('webviewtest', 'FINISHED (' + queryTime + 's)');
+            setLabel(useDbFind ? 'webviewtestfind' : 'webviewtest', 'FINISHED (' + queryTime + 's)');
             testRunning = false;
         })
         .catch(function (error) {
             console.log('Test failed: ' + error)
-            Mobile('testFinished').call(error);
+            setLabel(useDbFind ? 'webviewtestfind' : 'webviewtest', 'FINISHED (' + error + ')');
         });
 }
 
-function testJXCore () {
+function testJXCore (useDbFind) {
     if (testRunning) {
         return;
     }
     testRunning = true;
-    setLabel('jxcoretest', 'STARTED');
+    setLabel(useDbFind ? 'jxcoretestfind' : 'jxcoretest', 'STARTED');
 
-    jxcore('runTest').call();
+    jxcore('runTest').call(useDbFind);
 }
 
 app.initialize();

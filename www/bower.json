@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "pouchdb": "6.0.5",
+    "pouchdb-find": "0.10.3",
     "q": "1.0.1"
   }
 }
